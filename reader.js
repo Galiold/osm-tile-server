@@ -1,10 +1,14 @@
 const express = require('express')
 const app = express()
-const PORT = 3000
 
 const fs = require('fs')
 
+const PORT = 3000
+const FILE_PATH = './test.txt'
+
 app.get('/coordinates', (req, res) => {
+  console.log('Request for file recieved.')
+  
   readCoords()
     .then(coords => {
       res.status = 200
@@ -30,7 +34,7 @@ app.listen(PORT, () => {
 
 const readCoords = () => {
   return new Promise((resolve, reject) => {
-    fs.readFile('./test.txt', (err, data) => {
+    fs.readFile(FILE_PATH, (err, data) => {
       if (err) {
         reject(new Error(err))
       } else {
