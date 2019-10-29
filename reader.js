@@ -25,7 +25,7 @@ app.get('/coordinates', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Reader listining on port ${PORT}.`)
+  console.log(`Reader listining on port ${PORT}...`)
 })
 
 const readCoords = () => {
