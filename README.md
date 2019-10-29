@@ -23,3 +23,4 @@ You should see the following output.
 ```
 Reader listining on port 3000...
 ```
+Now you can view the built webpage in `http://localhost:1234`
