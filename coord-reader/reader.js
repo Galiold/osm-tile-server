@@ -5,7 +5,7 @@ const csv = require('csv-parser')
 const fs = require('fs')
 
 const PORT = 3000
-const FILE_PATH = './test.txt'
+const FILE_PATH = './test.csv'
 
 app.get('/coordinates', (_req, res) => {
   console.log('Request for file recieved.')
