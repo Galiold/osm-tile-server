@@ -31,7 +31,7 @@ function httpGetAsync(theUrl, callback) {
 
 var tileLayer = new TileLayer({
   source: new XYZ({
-    url: 'http://localhost/styles/osm-bright/{z}/{x}/{y}.png' +
+    url: 'http://localhost:8080/styles/osm-bright/{z}/{x}/{y}.png' +
       '?apiKey=WyI2YzM4YTAzNS01MGRiLTQ1YzMtOTRjNC03YmRlYjE0ZjA4MmIiLCItMSIsODEyN10.XbcggA.r0pUnagLql-0daR8BFDW68pYKmE'
   })
 });
