@@ -1,11 +1,33 @@
+const rp = require('request-promise')
+const request = require('sync-request')
 const express = require('express')
-const app = express()
-
 const csv = require('csv-parser')
 const fs = require('fs')
 
+const app = express()
+// const mqtt = require('mqtt')
+// const mqttClient = mqtt.connect('107.174.20.113')
+
 const PORT = 3000
 const FILE_PATH = './test.csv'
+
+// var client  = mqtt.connect('mqtt://107.174.20.113')
+ 
+// client.on('connect', function () {
+//   client.subscribe('mqtt_gs', function (err) {
+//     if (err) {
+//       // client.publish('presence', 'Hello mqtt')
+//       console.log(err)
+//     }
+//   })
+// })
+ 
+// client.on('message', function (topic, message) {
+//   // message is Buffer
+//   console.log(message.toString())
+//   // client.end()
+// })
+
 
 app.get('/coordinates', (_req, res) => {
   console.log('Request for file recieved.')
@@ -30,6 +52,7 @@ app.get('/coordinates', (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Reader listining on port ${PORT}...`)
 })
+
 
 /**
  * Read points from the given text file
@@ -56,12 +79,17 @@ const readCoords = (file) => {
       .on('data', (data) => results.push(data))
       .on('error', (err) => reject(err))
       .on('end', () => {
-        const coords = results.map(point => degrees2meters(parseFloat(point.Lon), parseFloat(point.Lat)))
-        resolve(coords)
+        let processedPoints = []
+        results.forEach(point => {
+          let res = request('GET', `http://localhost:5000/nearest/v1/car/${point.Lon},${point.Lat}`)
+          processedPoints.push(JSON.parse(res.getBody()).waypoints[0].location)
+        })
+          const coords = processedPoints.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
+          resolve(coords)
+        
       })
   })
 }
-
 
 const degrees2meters = (lon, lat) => {
   var x = lon * 20037508.34 / 180;

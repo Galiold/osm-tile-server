@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel index.html",
-    "reader": "cd coord-reader; node reader.js",
-    "build": "parcel build --public-url . index.html"
+    "start": "node reader.js"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +13,10 @@
   "dependencies": {
     "csv-parser": "^2.3.2",
     "express": "^4.17.1",
-    "ol": "^6.0.1"
+    "mqtt": "^3.0.0",
+    "ol": "^6.1.1",
+    "request-promise": "^4.2.5",
+    "sync-request": "^6.1.0"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
