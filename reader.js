@@ -47,35 +47,36 @@ client.on('message', function (topic, message) {
 app.get('/coordinates', (_req, res) => {
   console.log('Request for file recieved.')
 
-//   // readCoords(FILE_PATH)
-//   //   .then(coords => {
-//   //     res.statusCode = 200
-//   //     res.send({
-//   //       status: 'Ok',
-//   //       result: coords
-//   //     })
-//   //   })
-//   //   .catch(err => {
-//   //     res.statusCode = 500
-//   //     res.send({
-//   //       status: 'Error',
-//   //       message: err
-//   //     })
-//   //   })
+  readCoords(FILE_PATH)
+    .then(coords => {
+      res.statusCode = 200
+      res.send({
+        status: 'Ok',
+        result: coords
+      })
+    })
+    .catch(err => {
+      res.statusCode = 500
+      res.send({
+        status: 'Error',
+        message: err
+      })
+    })
 
-  let coords = readCoords(FILE_PATH)
-  // console.log(coords)
-  res.statusCode = 200
-  res.send({
-    status: 'Ok',
-    result: coords
-  })
+  // let coords = readCoords(FILE_PATH)
+  // // console.log(coords)
+  // res.statusCode = 200
+  // res.send({
+  //   status: 'Ok',
+  //   result: coords
+  // })
 })
 
 app.listen(PORT, () => {
   console.log(`Reader listining on port ${PORT}...`)
 })
 
+let updateLength = 0
 
 /**
  * Read points from the given text file
@@ -94,36 +95,38 @@ app.listen(PORT, () => {
  *  readCoords('./coordinations.txt')
  */
 const readCoords = (file) => {
-  // const results = []
-  // return new Promise((resolve, reject) => {
-  //   fs.createReadStream(file)
-  //     .on('error', err => reject(err))
-  //     .pipe(csv())
-  //     .on('data', (data) => results.push(data))
-  //     .on('error', (err) => reject(err))
-  //     .on('end', () => {
-  //       let processedPoints = []
-  //       results.forEach(point => {
-  //         let res = request('GET', `http://localhost:5000/nearest/v1/car/${point.Lon},${point.Lat}`)
-  //         processedPoints.push(JSON.parse(res.getBody()).waypoints[0].location)
-  //       })
-  //         const coords = processedPoints.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
-  //         resolve(coords)
-        
-  //     })
-  // })
-  if (newData.length > 0){
-    let processedPoints = []
-    newData.forEach(point => {
-      let res = request('GET', `http://localhost:5000/nearest/v1/car/${point[0]},${point[1]}`)
-      processedPoints.push(JSON.parse(res.getBody()).waypoints[0].location)
-    })
-    let coords = processedPoints.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
-    newData = []
-    return coords
-  } else {
-    return []
-  }
+  const results = []
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(file)
+      .on('error', err => reject(err))
+      .pipe(csv())
+      .on('data', (data) => results.push(data))
+      .on('error', (err) => reject(err))
+      .on('end', () => {
+        let newResults = results.slice(updateLength)
+        updateLength = results.length
+        // let processedPoints = []
+        newResults.forEach(point => {
+          let res = request('GET', `http://localhost:5000/nearest/v1/car/${point.Lon},${point.Lat}`)
+          newData.push(JSON.parse(res.getBody()).waypoints[0].location)
+        })
+          const coords = newData.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
+          newData = []
+          resolve(coords)
+      })
+  })
+  // if (newData.length > 0){
+  //   let processedPoints = []
+  //   newData.forEach(point => {
+  //     let res = request('GET', `http://localhost:5000/nearest/v1/car/${point[0]},${point[1]}`)
+  //     processedPoints.push(JSON.parse(res.getBody()).waypoints[0].location)
+  //   })
+  //   let coords = processedPoints.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
+  //   newData = []
+  //   return coords
+  // } else {
+  //   return []
+  // }
 }
 
 const degrees2meters = (lon, lat) => {
