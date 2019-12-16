@@ -26,6 +26,7 @@ client.on('connect', function () {
 })
  
 let processedData = []
+let unprocessedData = []
 client.on('message', function (topic, message) {
   // message is Buffer
   // console.log('packet recieved');
@@ -40,22 +41,28 @@ client.on('message', function (topic, message) {
   packets.forEach(packet => {
     if (packet[0] !== '') {
       newData.push([packet[1], packet[0]])
+      unprocessedData.push([packet[1], packet[0]])
     }
   })
   console.log('newData');
   console.log(newData);
 
-  let newProcess = []
-  newData.forEach(point => {
-    let res = request('GET', `http://localhost:5000/nearest/v1/car/${point[0]},${point[1]}`)
-    newProcess.push(JSON.parse(res.getBody()).waypoints[0].location)
-    processedData.push(JSON.parse(res.getBody()).waypoints[0].location)
-  })
+  try {
+    let newProcess = []
+    newData.forEach(point => {
+      let res = request('GET', `http://localhost:5000/nearest/v1/car/${point[0]},${point[1]}`)
+      newProcess.push(JSON.parse(res.getBody()).waypoints[0].location)
+      processedData.push(JSON.parse(res.getBody()).waypoints[0].location)
+    })
 
-  console.log('newProcess');
-  console.log(newProcess);
-  
-  client.publish('mqtt_gs_match', newProcess.toString())
+    console.log('newProcess');
+    console.log(newProcess);
+    
+    client.publish('mqtt_gs_match', newProcess.toString())
+  } catch (e) {
+    console.log('MatchMaking server is not running');
+    
+  }
   
   // console.log(packets.length) // 11 or 61
   // console.log(packets)
@@ -83,11 +90,12 @@ app.get('/coordinates', (_req, res) => {
   //   })
 
   let coords = readCoords(FILE_PATH)
-  // console.log(coords)
+  console.log(coords)
   res.statusCode = 200
   res.send({
     status: 'Ok',
-    result: coords
+    matched: coords.matched,
+    unmatched: coords.unmatched
   })
 })
 
@@ -134,10 +142,12 @@ const readCoords = (file) => {
   //         resolve(coords)
   //     })
   // })
-  if (processedData.length > 0){
+  if (processedData.length > 0) {
     let coords = processedData.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
+    let rawCoords = unprocessedData.map(point => degrees2meters(parseFloat(point[0]), parseFloat(point[1])))
     processedData = []
-    return coords
+    unprocessedData = []
+    return {matched: coords, unmatched: rawCoords}
   } else {
     return []
   }
