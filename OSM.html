@@ -123,18 +123,18 @@
         
         
         tileLayer.on('postrender', function (event) {
-            if (coordinates.length > updateLength) {
-                console.log(coordinates.length)
-                console.log(updateLength)
-                console.log(coordinates);
-                console.log(coordinates.length);
-                console.log('test');
+            // if (coordinates.length > updateLength) {
+            //     console.log(coordinates.length)
+            //     console.log(updateLength)
+            //     console.log(coordinates);
+            //     console.log(coordinates.length);
+            //     console.log('test');
 
-                for (let i = 0; i < coordinates.length - 1; i++) {
-                    drawLine(coordinates[i], coordinates[i + 1])
-                }   
-                updateLength = coordinates.length
-            }
+            //     for (let i = 0; i < coordinates.length - 1; i++) {
+            //         drawLine(coordinates[i], coordinates[i + 1])
+            //     }   
+            //     updateLength = coordinates.length
+            // }
             if (coordinates.length > 0) {
                 var vectorContext = ol.render.getVectorContext(event);
                 vectorContext.setStyle(imageStyle);
