@@ -178,18 +178,18 @@
 
         });
 
-        tileLayer.on('postrender', function (event) {
-            if (coordinates.length > 0) {
-                var vectorContext2 = ol.render.getVectorContext(event);
-                vectorContext2.setStyle(imageStyle_unmatched);
-                vectorContext2.drawGeometry(new ol.geom.MultiPoint(raw_coordinates));
-                var headPoint2 = new ol.geom.Point(raw_coordinates[raw_coordinates.length - 1]);
-                vectorContext2.setStyle(headOuterImageStyle);
-                vectorContext2.drawGeometry(headPoint2);
-                vectorContext2.setStyle(headInnerImageStyle);
-                vectorContext2.drawGeometry(headPoint2);
-            }  
-        })
+        // tileLayer.on('postrender', function (event) {
+        //     if (coordinates.length > 0) {
+        //         var vectorContext2 = ol.render.getVectorContext(event);
+        //         vectorContext2.setStyle(imageStyle_unmatched);
+        //         vectorContext2.drawGeometry(new ol.geom.MultiPoint(raw_coordinates));
+        //         var headPoint2 = new ol.geom.Point(raw_coordinates[raw_coordinates.length - 1]);
+        //         vectorContext2.setStyle(headOuterImageStyle);
+        //         vectorContext2.drawGeometry(headPoint2);
+        //         vectorContext2.setStyle(headInnerImageStyle);
+        //         vectorContext2.drawGeometry(headPoint2);
+        //     }  
+        // })
         
         map.render()
     </script>
